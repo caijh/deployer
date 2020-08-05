@@ -2,8 +2,11 @@ package com.github.caijh.deployer.controller;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.UUID;
 
+import com.github.caijh.deployer.model.App;
 import com.github.caijh.deployer.request.AppCreateReq;
+import com.github.caijh.deployer.service.AppService;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 import com.google.common.io.Resources;
@@ -21,14 +24,29 @@ public class AppController {
     @Autowired
     private JinjavaConfig jinjavaConfig;
 
+    @Autowired
+    private AppService appService;
+
+
     @PostMapping(value = "/app")
     @ResponseBody
     public String create(@RequestBody AppCreateReq req) throws IOException {
+        App app = new App();
+        app.setId(UUID.randomUUID().toString());
+        app.setName(req.getName());
+        app.setClusterId(req.getClusterId());
+        app.setNamespace(req.getTargetNamespace());
+        app.setChartName(app.getChartName());
+        app.setChartVersion(app.getChartVersion());
+
+        appService.create(app);
+
+
         Jinjava jinjava = new Jinjava(jinjavaConfig);
         Map<String, Object> context = Maps.newHashMap();
         context.put("appName", req.getName());
         context.putAll(req.getValuesJson());
-        String template = Resources.toString(Resources.getResource("static/charts/mysql/templates/svc.yaml"), Charsets.UTF_8);
+        String template = Resources.toString(Resources.getResource("static/charts/mysql/0.0.1/templates/svc.yaml.j2"), Charsets.UTF_8);
         return jinjava.render(template, context);
     }
 

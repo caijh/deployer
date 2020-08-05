@@ -7,6 +7,7 @@ import lombok.Data;
 public class AppCreateReq {
 
     private String name;
+    private String clusterId;
     private String targetNamespace;
     private String chartName;
     private String chartVersion;
