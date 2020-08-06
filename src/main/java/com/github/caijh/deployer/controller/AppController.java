@@ -1,18 +1,12 @@
 package com.github.caijh.deployer.controller;
 
-import java.io.IOException;
-import java.util.Map;
 import java.util.UUID;
 
 import com.github.caijh.deployer.model.App;
 import com.github.caijh.deployer.request.AppCreateReq;
 import com.github.caijh.deployer.service.AppService;
-import com.google.common.base.Charsets;
-import com.google.common.collect.Maps;
-import com.google.common.io.Resources;
-import com.hubspot.jinjava.Jinjava;
-import com.hubspot.jinjava.JinjavaConfig;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -22,32 +16,31 @@ import org.springframework.web.bind.annotation.RestController;
 public class AppController {
 
     @Autowired
-    private JinjavaConfig jinjavaConfig;
-
-    @Autowired
     private AppService appService;
 
 
+    /**
+     * 创建app.
+     *
+     * @param req 请求信息
+     * @return string
+     * @throws Exception if create fail.
+     */
     @PostMapping(value = "/app")
     @ResponseBody
-    public String create(@RequestBody AppCreateReq req) throws IOException {
+    public ResponseEntity<String> create(@RequestBody AppCreateReq req) throws Exception {
         App app = new App();
         app.setId(UUID.randomUUID().toString());
         app.setName(req.getName());
         app.setClusterId(req.getClusterId());
         app.setNamespace(req.getTargetNamespace());
-        app.setChartName(app.getChartName());
-        app.setChartVersion(app.getChartVersion());
+        app.setChartName(req.getChartName());
+        app.setChartVersion(req.getChartVersion());
+        app.setValuesJson(req.getValuesJson());
 
         appService.create(app);
 
-
-        Jinjava jinjava = new Jinjava(jinjavaConfig);
-        Map<String, Object> context = Maps.newHashMap();
-        context.put("appName", req.getName());
-        context.putAll(req.getValuesJson());
-        String template = Resources.toString(Resources.getResource("static/charts/mysql/0.0.1/templates/svc.yaml.j2"), Charsets.UTF_8);
-        return jinjava.render(template, context);
+        return ResponseEntity.ok("create successful");
     }
 
 }

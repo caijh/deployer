@@ -9,7 +9,10 @@ public class AppConfig {
 
     @Bean
     public JinjavaConfig jinjavaConfig() {
-        return JinjavaConfig.newBuilder().withTrimBlocks(true).build();
+        return JinjavaConfig.newBuilder()
+                            .withTrimBlocks(true)
+                            .withLstripBlocks(true)
+                            .build();
     }
 
 }

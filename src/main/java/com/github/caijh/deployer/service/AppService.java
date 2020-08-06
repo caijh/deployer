@@ -4,6 +4,6 @@ import com.github.caijh.deployer.model.App;
 
 public interface AppService {
 
-    void create(App app);
+    void create(App app) throws Exception;
 
 }

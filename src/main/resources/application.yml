@@ -1,19 +1,30 @@
 server:
-  port: 8080
+  port: 8081
 
 spring:
   aop:
     proxy-target-class: true
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/test?serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull
+    url: jdbc:mysql://127.0.0.1:3306/deployer?serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull
     username: root
     password: 123456
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
       naming:
         implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
     properties:
       hibernate.jdbc.lob.non_contextual_creation: true
-      hibernate.dialect: com.github.caijh.deployer.config.mysql.CustomMySQLDialect
+      hibernate.dialect: com.github.caijh.deployer.config.mysql.CustomMySqlDialect
+
+
+helm:
+  charts:
+    dir: classpath:static/charts
+
+clusters:
+  dir: classpath:static/clusters
+
+apps:
+  dir: classpath:static/apps
