@@ -8,5 +8,5 @@ spec:
     - ReadWriteMany
   resources:
     requests:
-      storage: "{{ storageSize }}"
-  storageClassName: "{{ storageClassName }}"
+      storage: "{{ persistence.size }}"
+  storageClassName: "{{ persistence.storageClass }}"

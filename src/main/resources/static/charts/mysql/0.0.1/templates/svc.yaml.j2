@@ -6,14 +6,14 @@ metadata:
   labels:
     app: "{{ name }}"
 spec:
-  {% if service.type == 'NodePort' %}
-type: NodePort
-ports:
-  - port: {{ service.port }}
-    nodePort: {{ service.nodePort }}
-  {% else %}
-ports:
-  - port: {{ service.port }}
-  {% endif %}
-selector:
-  app: "{{ name }}"
+{% if service.type == 'NodePort' %}
+  type: NodePort
+  ports:
+    - port: {{ service.port }}
+      nodePort: {{ service.nodePort }}
+{% else %}
+  ports:
+    - port: {{ service.port }}
+{% endif %}
+  selector:
+    app: "{{ name }}"
