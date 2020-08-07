@@ -26,7 +26,7 @@ public class Kubectl {
     /**
      * 调用kubectl的命令进行部署.
      *
-     * @param subCommand kubect子命令
+     * @param subCommand kubectl子命令
      * @param cluster    目标集群
      * @param app        要安装app
      * @return ProcessResult
