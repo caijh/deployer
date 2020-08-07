@@ -11,19 +11,32 @@ import com.github.caijh.deployer.config.props.ClustersProperties;
 import com.github.caijh.deployer.exception.KubectlException;
 import com.github.caijh.deployer.model.App;
 import com.github.caijh.deployer.model.Cluster;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Kubectl {
+
+    public static final String CMD_NAME = "kubectl";
+    private static final Logger LOGGER = LoggerFactory.getLogger(Kubectl.class);
 
     private Kubectl() {
 
     }
 
-    public static ProcessResult apply(Cluster cluster, App app) {
+    /**
+     * 调用kubectl的命令进行部署.
+     *
+     * @param subCommand kubect子命令
+     * @param cluster    目标集群
+     * @param app        要安装app
+     * @return ProcessResult
+     */
+    public static ProcessResult process(SubCommand subCommand, Cluster cluster, App app) {
         ProcessResult result = new ProcessResult();
         try {
             String[] cmdArray = new String[]{
-                "kubectl",
-                SubCommand.CMD_APPLY,
+                CMD_NAME,
+                subCommand.name,
                 Options.OPTION_FILENAME,
                 AppsProperties.appsDir.getPath() + File.separator + app.getName() + File.separator + app.getRevision(),
                 Options.OPTION_NAMESPACE,
@@ -38,6 +51,7 @@ public class Kubectl {
             String consoleString = readConsoleString(process);
             result.setExitValue(exitValue);
             result.setConsoleString(consoleString);
+            LOGGER.info(consoleString);
         } catch (Exception e) {
             throw new KubectlException(e);
         }
@@ -56,11 +70,17 @@ public class Kubectl {
         return console.toString();
     }
 
-    private static class SubCommand {
+    public enum SubCommand {
+        APPLY("apply"),
+        DELETE("delete");
 
-        static final String CMD_APPLY = "apply";
+        private final String name;
 
+        SubCommand(String name) {
+            this.name = name;
+        }
     }
+
 
     private static class Options {
 

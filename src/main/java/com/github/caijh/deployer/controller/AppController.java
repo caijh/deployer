@@ -1,11 +1,11 @@
 package com.github.caijh.deployer.controller;
 
 import java.util.UUID;
+import javax.inject.Inject;
 
 import com.github.caijh.deployer.model.App;
 import com.github.caijh.deployer.request.AppCreateReq;
 import com.github.caijh.deployer.service.AppService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,9 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class AppController {
 
-    @Autowired
+    @Inject
     private AppService appService;
-
 
     /**
      * 创建app.

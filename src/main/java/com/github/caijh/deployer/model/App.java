@@ -15,9 +15,18 @@ public class App {
     @Id
     private String id;
     private String name;
+    /**
+     * 集群id.
+     */
     private String clusterId;
+    /**
+     * K8S命名空间.
+     */
     private String namespace;
 
+    /**
+     * 当前部署版本.
+     */
     private Integer revision;
 
     private String chartName;
