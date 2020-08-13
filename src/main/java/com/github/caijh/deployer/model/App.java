@@ -4,13 +4,14 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 
 import com.alibaba.fastjson.JSONObject;
+import com.github.caijh.framework.orm.model.BaseEntity;
 import lombok.Data;
 import org.hibernate.annotations.Type;
 
 
 @Data
 @Entity
-public class App {
+public class App implements BaseEntity<String> {
 
     @Id
     private String id;

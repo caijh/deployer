@@ -16,7 +16,7 @@ spring:
         implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
     properties:
       hibernate.jdbc.lob.non_contextual_creation: true
-      hibernate.dialect: com.github.caijh.deployer.config.mysql.CustomMySqlDialect
+      hibernate.dialect: com.github.caijh.framework.orm.mysql.CustomMySqlDialect
 
 
 helm:

@@ -1,15 +1,24 @@
 package com.github.caijh.deployer.service.impl;
 
 import java.io.File;
+import javax.inject.Inject;
 
 import com.github.caijh.deployer.config.props.ChartsProperties;
 import com.github.caijh.deployer.exception.ChartNotFoundException;
 import com.github.caijh.deployer.exception.ChartVersionNotFoundException;
+import com.github.caijh.deployer.model.Chart;
+import com.github.caijh.deployer.repository.ChartRepository;
 import com.github.caijh.deployer.service.ChartService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ChartServiceImpl implements ChartService {
+
+    @Inject
+    private ChartRepository chartRepository;
+
 
     @Override
     public String findChartPath(String chartName, String chartVersion) {
@@ -26,6 +35,11 @@ public class ChartServiceImpl implements ChartService {
         }
 
         return matchChart[0].getPath();
+    }
+
+    @Override
+    public Page<Chart> list(Pageable pageable) {
+        return chartRepository.findAll(pageable);
     }
 
 }
