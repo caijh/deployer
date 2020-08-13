@@ -57,6 +57,7 @@ public class AppServiceImpl implements AppService {
 
         app.setRevision(1); // 记录app的版本为1
         appRepository.save(app);
+
         ProcessResult processResult;
         try {
             // 渲染模板并写入到app的revision目录下

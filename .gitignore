@@ -3,6 +3,8 @@
 target/
 *.iml
 
+src/main/resources/static/docs/
+
 HELP.md
 
 # Log file

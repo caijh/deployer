@@ -12,6 +12,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * 应用控制器.
+ *
+ * @author caijunhui
+ */
 @RestController
 public class AppController {
 

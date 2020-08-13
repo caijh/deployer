@@ -1,0 +1,29 @@
+{
+    "serverUrl": "http://127.0.0.1:8080",
+    "isStrict": true,
+    "allInOne": true,
+    "outPath": "src/main/resources/static/docs",
+    "coverOld": true,
+    "packageFilters": "",
+    "md5EncryptedHtmlName": false,
+    "projectName": "deploy",
+    "skipTransientField": true,
+    "showAuthor": true,
+    "errorCodes": [
+        {
+            "value": "200",
+            "type": "string",
+            "desc": "ok"
+        },
+        {
+            "value": "401",
+            "type": "string",
+            "desc": "未授权"
+        },
+        {
+            "value": "500",
+            "type": "string",
+            "desc": "服务端错误"
+        }
+    ]
+}

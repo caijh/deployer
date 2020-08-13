@@ -2,6 +2,7 @@ package com.github.caijh.deployer.controller;
 
 import java.util.List;
 import javax.inject.Inject;
+import javax.validation.Valid;
 
 import com.github.caijh.deployer.model.Cluster;
 import com.github.caijh.deployer.request.ClusterAddReqBody;
@@ -13,6 +14,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+/**
+ * 集群控制器.
+ *
+ * @author caijunhui
+ */
 @RestController
 public class ClusterController {
 
@@ -37,7 +43,7 @@ public class ClusterController {
      * @throws Exception if add cluster fail.
      */
     @PostMapping(value = "/cluster")
-    public void add(@ModelAttribute ClusterAddReqBody reqBody, @RequestParam(value = "kubeconfig") MultipartFile file) throws Exception {
+    public void add(@ModelAttribute @Valid ClusterAddReqBody reqBody, @RequestParam(value = "kubeconfig") MultipartFile file) throws Exception {
         Cluster cluster = new Cluster();
         cluster.setName(reqBody.getName());
         cluster.setKubeApiserver(reqBody.getKubeApiserver());
