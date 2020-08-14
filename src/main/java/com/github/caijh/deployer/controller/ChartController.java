@@ -23,10 +23,10 @@ public class ChartController {
     private ChartService chartService;
 
     /**
-     * 应用模板chart列表
+     * 应用模板chart列表.
      *
      * @param reqBody ChartsReqBody
-     * @return Page<Chart> 应用模板列表分页
+     * @return Page&lt;hart&gt; 应用模板列表分页
      */
     @PostMapping(value = "/charts")
     public Page<Chart> charts(@RequestBody @Valid ChartsReqBody reqBody) {
