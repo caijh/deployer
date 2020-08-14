@@ -6,10 +6,12 @@ import javax.persistence.Id;
 
 import com.github.caijh.framework.orm.model.BaseEntity;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Entity
 @Data
-public class Cluster implements BaseEntity<String> {
+@EqualsAndHashCode(callSuper = false)
+public class Cluster extends BaseEntity<String> {
 
     /**
      * 集群id.

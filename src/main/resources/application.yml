@@ -18,7 +18,6 @@ spring:
       hibernate.jdbc.lob.non_contextual_creation: true
       hibernate.dialect: com.github.caijh.framework.orm.mysql.CustomMySqlDialect
 
-
 helm:
   charts:
     dir: classpath:static/charts
@@ -28,3 +27,4 @@ clusters:
 
 apps:
   dir: classpath:static/apps
+debug: true

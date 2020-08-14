@@ -3,13 +3,14 @@ package com.github.caijh.deployer.service.impl;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
+import java.util.Optional;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
+import com.github.caijh.commons.base.exception.BizRuntimeException;
 import com.github.caijh.deployer.cmd.Kubectl;
 import com.github.caijh.deployer.cmd.ProcessResult;
 import com.github.caijh.deployer.config.props.AppsProperties;
-import com.github.caijh.deployer.exception.BizException;
 import com.github.caijh.deployer.exception.ClusterNotFoundException;
 import com.github.caijh.deployer.exception.KubectlException;
 import com.github.caijh.deployer.jinjava.Base64EncodeFilter;
@@ -23,6 +24,8 @@ import com.google.common.collect.Maps;
 import com.google.common.io.Files;
 import com.hubspot.jinjava.Jinjava;
 import com.hubspot.jinjava.JinjavaConfig;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
 
@@ -52,7 +55,7 @@ public class AppServiceImpl implements AppService {
         // 是否存在同名的app
         App existApp = appRepository.findByClusterIdAndNamespaceAndName(app.getClusterId(), app.getNamespace(), app.getName());
         if (existApp != null) {
-            throw new BizException("app name exist");
+            throw new BizRuntimeException("app name exist");
         }
 
         app.setRevision(1); // 记录app的版本为1
@@ -74,8 +77,18 @@ public class AppServiceImpl implements AppService {
                 FileSystemUtils.deleteRecursively(toDeleted);
             }
 
-            throw new BizException(e);
+            throw new BizRuntimeException(e);
         }
+    }
+
+    @Override
+    public Page<App> list(Pageable pageable) {
+        return appRepository.findAll(pageable);
+    }
+
+    @Override
+    public Optional<App> getByName(String clusterId, String appName) {
+        return appRepository.findByClusterIdAndName(clusterId, appName);
     }
 
     private void renderTemplateThenWriteFile(App app) throws IOException {
@@ -89,7 +102,7 @@ public class AppServiceImpl implements AppService {
         File templatesDir = new File(chartPath + File.separator + "templates");
         File[] templates = templatesDir.listFiles();
         if (templates == null || templates.length <= 0) {
-            throw new BizException();
+            throw new BizRuntimeException();
         }
 
         for (File file : templates) {

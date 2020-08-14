@@ -1,15 +1,17 @@
 package com.github.caijh.deployer.controller;
 
-import java.util.List;
 import javax.inject.Inject;
 import javax.validation.Valid;
 
 import com.github.caijh.deployer.model.Cluster;
 import com.github.caijh.deployer.request.ClusterAddReqBody;
+import com.github.caijh.deployer.request.ClustersReqBody;
 import com.github.caijh.deployer.service.ClusterService;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,11 +30,12 @@ public class ClusterController {
     /**
      * 获取当前集群列表.
      *
+     * @param reqBody ClustersReqBody
      * @return 集群列表
      */
-    @GetMapping(value = "/clusters")
-    public List<Cluster> clusters() {
-        return clusterService.list();
+    @PostMapping(value = "/clusters")
+    public Page<Cluster> clusters(@RequestBody ClustersReqBody reqBody) {
+        return clusterService.list(PageRequest.of(reqBody.getPageNo(), reqBody.getPageSize()));
     }
 
     /**

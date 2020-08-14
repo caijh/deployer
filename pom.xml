@@ -61,10 +61,11 @@
             <version>1.8.8</version>
         </dependency>
         <dependency>
-            <groupId>io.kubernetes</groupId>
-            <artifactId>client-java</artifactId>
-            <version>9.0.0</version>
+            <groupId>io.fabric8</groupId>
+            <artifactId>kubernetes-client</artifactId>
+            <version>4.10.2</version>
         </dependency>
+
     </dependencies>
 
     <build>

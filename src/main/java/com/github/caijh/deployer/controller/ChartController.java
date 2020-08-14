@@ -8,7 +8,6 @@ import com.github.caijh.deployer.request.ChartsReqBody;
 import com.github.caijh.deployer.service.ChartService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,8 +29,7 @@ public class ChartController {
      */
     @PostMapping(value = "/charts")
     public Page<Chart> charts(@RequestBody @Valid ChartsReqBody reqBody) {
-        Pageable pageable = PageRequest.of(reqBody.getPageNo(), reqBody.getPageSize());
-        return chartService.list(pageable);
+        return chartService.list(PageRequest.of(reqBody.getPageNo(), reqBody.getPageSize()));
     }
 
 }

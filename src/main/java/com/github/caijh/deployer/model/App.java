@@ -6,12 +6,14 @@ import javax.persistence.Id;
 import com.alibaba.fastjson.JSONObject;
 import com.github.caijh.framework.orm.model.BaseEntity;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.Type;
 
 
 @Data
+@EqualsAndHashCode(callSuper = false)
 @Entity
-public class App implements BaseEntity<String> {
+public class App extends BaseEntity<String> {
 
     @Id
     private String id;

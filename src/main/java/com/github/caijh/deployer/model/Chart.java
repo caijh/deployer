@@ -5,13 +5,15 @@ import javax.persistence.Id;
 
 import com.github.caijh.framework.orm.model.BaseEntity;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * 应用模板信息.
  */
 @Entity
 @Data
-public class Chart implements BaseEntity<Long> {
+@EqualsAndHashCode(callSuper = false)
+public class Chart extends BaseEntity<Long> {
 
     /**
      * 应用模板id.
