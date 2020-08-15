@@ -15,8 +15,10 @@ import com.github.caijh.deployer.repository.ClusterRepository;
 import com.github.caijh.deployer.service.ClusterService;
 import com.google.common.io.Files;
 import io.fabric8.kubernetes.client.Config;
+import io.fabric8.kubernetes.client.ConfigBuilder;
 import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -65,14 +67,21 @@ public class ClusterServiceImpl implements ClusterService {
 
         Cluster cluster = clusterRepository.findById(clusterId).orElseThrow(ClusterNotFoundException::new);
 
-        try {
-            File kubeconfig = new File(ClustersProperties.getClustersDir().getPath() + File.separator + cluster.getId() + File.separator + "kubeconfig");
-            Config config = Config.fromKubeconfig(Files.asCharSource(kubeconfig, UTF_8).read());
+        Config config = null;
+        if (StringUtils.isBlank(cluster.getAuthToken())) {
+            try {
+                File kubeconfig = new File(ClustersProperties.getClustersDir().getPath() + File.separator + cluster.getId() + File.separator + "kubeconfig");
+                config = Config.fromKubeconfig(Files.asCharSource(kubeconfig, UTF_8).read());
+                kubernetesClient = new DefaultKubernetesClient(config);
+            } catch (IOException e) {
+                throw new BizRuntimeException();
+            }
+        } else {
+            config = new ConfigBuilder().withMasterUrl(cluster.getKubeApiserver()).withOauthToken(cluster.getAuthToken()).build();
             kubernetesClient = new DefaultKubernetesClient(config);
-            kubernetesClients.put(clusterId, kubernetesClient);
-        } catch (IOException e) {
-            throw new BizRuntimeException();
         }
+        kubernetesClients.put(clusterId, kubernetesClient);
+
 
         return kubernetesClient;
     }

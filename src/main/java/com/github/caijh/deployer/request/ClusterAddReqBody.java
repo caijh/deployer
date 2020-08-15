@@ -19,4 +19,9 @@ public class ClusterAddReqBody {
     @NotNull
     private String kubeApiserver;
 
+    /**
+     * 集群验证token.
+     */
+    private String authToken;
+
 }

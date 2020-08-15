@@ -22,12 +22,15 @@ public class Cluster extends BaseEntity<String> {
     /**
      * 集群名称，唯一.
      */
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String name;
 
     /**
      * 集群apiserver地址.
      */
+    @Column(nullable = false)
     private String kubeApiserver;
+
+    private String authToken;
 
 }
