@@ -1,6 +1,8 @@
 package com.github.caijh.deployer.model;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 import com.github.caijh.framework.orm.model.BaseEntity;
@@ -19,6 +21,7 @@ public class Chart extends BaseEntity<Long> {
      * 应用模板id.
      */
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     /**
