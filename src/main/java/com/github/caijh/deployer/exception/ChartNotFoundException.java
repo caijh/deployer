@@ -1,5 +1,7 @@
 package com.github.caijh.deployer.exception;
 
-public class ChartNotFoundException extends RuntimeException {
+import com.github.caijh.commons.base.exception.BizRuntimeException;
+
+public class ChartNotFoundException extends BizRuntimeException {
 
 }

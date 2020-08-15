@@ -14,4 +14,6 @@ public interface ClusterService {
 
     KubernetesClient getKubernetesClient(String clusterId);
 
+    KubernetesClient getKubernetesClient(Cluster cluster);
+
 }

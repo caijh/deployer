@@ -2,8 +2,10 @@ package com.github.caijh.deployer.model;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 
 import com.alibaba.fastjson.JSONObject;
+import com.github.caijh.deployer.enums.AppStatusEnum;
 import com.github.caijh.framework.orm.model.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -37,5 +39,11 @@ public class App extends BaseEntity<String> {
 
     @Type(type = "json")
     private JSONObject valuesJson;
+
+    /**
+     * 状态.
+     */
+    @Transient
+    private AppStatusEnum status;
 
 }

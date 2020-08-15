@@ -34,6 +34,7 @@ public class Kubectl {
     public static ProcessResult process(SubCommand subCommand, Cluster cluster, App app) {
         ProcessResult result = new ProcessResult();
         try {
+            // TODO: 使用命令模式重写
             String[] cmdArray = new String[]{
                 CMD_NAME,
                 subCommand.name,
@@ -42,7 +43,8 @@ public class Kubectl {
                 Options.OPTION_NAMESPACE,
                 app.getNamespace(),
                 Options.OPTION_KUBECONFIG,
-                ClustersProperties.getClustersDir().getPath() + File.separator + cluster.getId() + File.separator + "kubeconfig"
+                ClustersProperties.getClustersDir().getPath() + File.separator + cluster.getId() + File.separator + "kubeconfig",
+                subCommand == SubCommand.DELETE ? (Options.OPTION_IGNORE_NOT_FOUND + "=true") : "",
             };
 
             Process process = Runtime.getRuntime().exec(cmdArray);
@@ -87,6 +89,7 @@ public class Kubectl {
         static final String OPTION_FILENAME = "-f";
         static final String OPTION_NAMESPACE = "-n";
         static final String OPTION_KUBECONFIG = "--kubeconfig";
+        static final String OPTION_IGNORE_NOT_FOUND = "--ignore-not-found";
 
     }
 

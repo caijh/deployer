@@ -3,6 +3,7 @@ package com.github.caijh.deployer.controller;
 import javax.inject.Inject;
 import javax.validation.Valid;
 
+import com.github.caijh.deployer.init.InformerInit;
 import com.github.caijh.deployer.model.Cluster;
 import com.github.caijh.deployer.request.ClusterAddReqBody;
 import com.github.caijh.deployer.request.ClustersReqBody;
@@ -26,6 +27,9 @@ public class ClusterController {
 
     @Inject
     private ClusterService clusterService;
+
+    @Inject
+    private InformerInit informerInit;
 
     /**
      * 获取当前集群列表.
@@ -52,6 +56,8 @@ public class ClusterController {
         cluster.setKubeApiserver(reqBody.getKubeApiserver());
 
         clusterService.add(cluster, file);
+
+        informerInit.initClusterInformer(cluster);
     }
 
 }

@@ -65,6 +65,17 @@ public class ClusterServiceImpl implements ClusterService {
 
         Cluster cluster = clusterRepository.findById(clusterId).orElseThrow(ClusterNotFoundException::new);
 
+        kubernetesClient = this.getKubernetesClient(cluster);
+
+        kubernetesClients.put(clusterId, kubernetesClient);
+
+        return kubernetesClient;
+    }
+
+    @Override
+    public KubernetesClient getKubernetesClient(Cluster cluster) {
+        KubernetesClient kubernetesClient;
+
         try {
             File kubeconfig = new File(ClustersProperties.getClustersDir().getPath() + File.separator + cluster.getId() + File.separator + "kubeconfig");
             Config config = Config.fromKubeconfig(Files.asCharSource(kubeconfig, UTF_8).read());
@@ -73,7 +84,7 @@ public class ClusterServiceImpl implements ClusterService {
             throw new BizRuntimeException();
         }
 
-        kubernetesClients.put(clusterId, kubernetesClient);
+        kubernetesClients.put(cluster.getId(), kubernetesClient);
 
         return kubernetesClient;
     }

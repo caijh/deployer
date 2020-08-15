@@ -1,6 +1,12 @@
 package com.github.caijh.deployer.exception;
 
-public class KubectlException extends RuntimeException {
+import com.github.caijh.commons.base.exception.BizRuntimeException;
+
+public class KubectlException extends BizRuntimeException {
+
+    public KubectlException(String message) {
+        super(message);
+    }
 
     public KubectlException(Exception e) {
         super(e);

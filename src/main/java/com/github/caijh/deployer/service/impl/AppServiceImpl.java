@@ -11,6 +11,7 @@ import com.github.caijh.commons.base.exception.BizRuntimeException;
 import com.github.caijh.deployer.cmd.Kubectl;
 import com.github.caijh.deployer.cmd.ProcessResult;
 import com.github.caijh.deployer.config.props.AppsProperties;
+import com.github.caijh.deployer.enums.AppStatusEnum;
 import com.github.caijh.deployer.exception.AppNotFoundException;
 import com.github.caijh.deployer.exception.ClusterNotFoundException;
 import com.github.caijh.deployer.exception.KubectlException;
@@ -21,10 +22,12 @@ import com.github.caijh.deployer.repository.AppRepository;
 import com.github.caijh.deployer.repository.ClusterRepository;
 import com.github.caijh.deployer.service.AppService;
 import com.github.caijh.deployer.service.ChartService;
+import com.github.caijh.deployer.service.ClusterService;
 import com.google.common.collect.Maps;
 import com.google.common.io.Files;
 import com.hubspot.jinjava.Jinjava;
 import com.hubspot.jinjava.JinjavaConfig;
+import io.fabric8.kubernetes.client.KubernetesClient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -46,6 +49,9 @@ public class AppServiceImpl implements AppService {
 
     @Inject
     private JinjavaConfig jinjavaConfig;
+
+    @Inject
+    private ClusterService clusterService;
 
     @Transactional
     @Override
@@ -69,7 +75,7 @@ public class AppServiceImpl implements AppService {
 
             processResult = Kubectl.process(Kubectl.SubCommand.APPLY, cluster, app);
             if (processResult.getExitValue() != 0) {
-                throw new KubectlException();
+                throw new KubectlException(processResult.getConsoleString());
             }
         } catch (Exception e) {
             processResult = Kubectl.process(Kubectl.SubCommand.DELETE, cluster, app);
@@ -84,7 +90,18 @@ public class AppServiceImpl implements AppService {
 
     @Override
     public Page<App> list(Pageable pageable) {
-        return appRepository.findAll(pageable);
+        Page<App> page = appRepository.findAll(pageable);
+        page.getContent().forEach(e -> {
+            KubernetesClient client = clusterService.getKubernetesClient(e.getClusterId());
+
+            Boolean ready = client.apps().deployments().inNamespace(e.getNamespace()).withName(e.getName()).isReady(); //
+            if (ready == null) {
+                e.setStatus(AppStatusEnum.UNKNOWN);
+            } else {
+                e.setStatus(ready ? AppStatusEnum.RUNNING : AppStatusEnum.NOT_READY);
+            }
+        });
+        return page;
     }
 
     @Override
