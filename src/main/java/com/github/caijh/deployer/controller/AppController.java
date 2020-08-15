@@ -1,7 +1,9 @@
 package com.github.caijh.deployer.controller;
 
+import java.io.IOException;
 import java.util.UUID;
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
 
 import com.github.caijh.deployer.model.App;
 import com.github.caijh.deployer.request.AppCreateReq;
@@ -11,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -62,6 +65,11 @@ public class AppController {
     public ResponseEntity<String> delete(@PathVariable String appId) {
         appService.delete(appId);
         return ResponseEntity.ok("delete ok");
+    }
+
+    @GetMapping(value = "/app/{appId}/logs")
+    public void logs(HttpServletResponse response, @PathVariable String appId) throws IOException {
+        appService.logs(appId, response);
     }
 
     /**

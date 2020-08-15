@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 
 import com.github.caijh.commons.base.exception.BizRuntimeException;
@@ -27,6 +28,7 @@ import com.google.common.collect.Maps;
 import com.google.common.io.Files;
 import com.hubspot.jinjava.Jinjava;
 import com.hubspot.jinjava.JinjavaConfig;
+import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -126,6 +128,21 @@ public class AppServiceImpl implements AppService {
     @Override
     public Optional<App> getById(String appId) {
         return appRepository.findById(appId);
+    }
+
+    @Override
+    public void logs(String appId, HttpServletResponse response) throws IOException {
+        App app = appRepository.findById(appId).orElseThrow(AppNotFoundException::new);
+
+        KubernetesClient kubernetesClient = clusterService.getKubernetesClient(app.getClusterId());
+
+        Pod pod = kubernetesClient.pods().inNamespace(app.getNamespace()).withLabel("app", app.getName()).list().getItems().get(0);
+        if (pod != null) {
+            kubernetesClient.pods().inNamespace(app.getNamespace())
+                            .withName(pod.getMetadata().getName())
+                            .tailingLines(20).watchLog(response.getOutputStream());
+        }
+
     }
 
     private void renderTemplateThenWriteFile(App app) throws IOException {

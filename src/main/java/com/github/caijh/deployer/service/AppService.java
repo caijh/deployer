@@ -1,6 +1,8 @@
 package com.github.caijh.deployer.service;
 
+import java.io.IOException;
 import java.util.Optional;
+import javax.servlet.http.HttpServletResponse;
 
 import com.github.caijh.deployer.model.App;
 import org.springframework.data.domain.Page;
@@ -27,5 +29,7 @@ public interface AppService {
     boolean delete(String appId);
 
     Optional<App> getById(String appId);
+
+    void logs(String appId, HttpServletResponse response) throws IOException;
 
 }
