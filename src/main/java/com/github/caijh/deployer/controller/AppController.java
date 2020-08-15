@@ -10,6 +10,8 @@ import com.github.caijh.deployer.service.AppService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -48,6 +50,18 @@ public class AppController {
         appService.create(app);
 
         return ResponseEntity.ok(app);
+    }
+
+    /**
+     * 删除应用实例.
+     *
+     * @param appId appId
+     * @return message about delete
+     */
+    @DeleteMapping(value = "/app/{appId}")
+    public ResponseEntity<String> delete(@PathVariable String appId) {
+        appService.delete(appId);
+        return ResponseEntity.ok("delete ok");
     }
 
     /**

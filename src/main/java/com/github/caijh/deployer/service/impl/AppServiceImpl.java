@@ -11,6 +11,7 @@ import com.github.caijh.commons.base.exception.BizRuntimeException;
 import com.github.caijh.deployer.cmd.Kubectl;
 import com.github.caijh.deployer.cmd.ProcessResult;
 import com.github.caijh.deployer.config.props.AppsProperties;
+import com.github.caijh.deployer.exception.AppNotFoundException;
 import com.github.caijh.deployer.exception.ClusterNotFoundException;
 import com.github.caijh.deployer.exception.KubectlException;
 import com.github.caijh.deployer.jinjava.Base64EncodeFilter;
@@ -89,6 +90,25 @@ public class AppServiceImpl implements AppService {
     @Override
     public Optional<App> getByName(String clusterId, String appName) {
         return appRepository.findByClusterIdAndName(clusterId, appName);
+    }
+
+    @Override
+    public boolean delete(String appId) {
+        App app = appRepository.findById(appId).orElseThrow(AppNotFoundException::new);
+
+        Cluster cluster = clusterRepository.findById(app.getClusterId()).orElseThrow(ClusterNotFoundException::new);
+
+        ProcessResult processResult = Kubectl.process(Kubectl.SubCommand.DELETE, cluster, app);
+        if (!processResult.isSuccessful()) {
+            throw new BizRuntimeException();
+        }
+
+        appRepository.delete(app);
+
+        File toDeleted = new File(AppsProperties.appsDir.getPath() + File.separator + app.getName() + File.separator);
+        FileSystemUtils.deleteRecursively(toDeleted);
+
+        return true;
     }
 
     private void renderTemplateThenWriteFile(App app) throws IOException {

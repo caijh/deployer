@@ -26,4 +26,6 @@ public interface AppService {
 
     Optional<App> getByName(String clusterId, String appName);
 
+    boolean delete(String appId);
+
 }
