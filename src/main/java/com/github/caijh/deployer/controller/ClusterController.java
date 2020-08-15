@@ -50,7 +50,6 @@ public class ClusterController {
         Cluster cluster = new Cluster();
         cluster.setName(reqBody.getName());
         cluster.setKubeApiserver(reqBody.getKubeApiserver());
-        cluster.setAuthToken(reqBody.getAuthToken());
 
         clusterService.add(cluster, file);
     }

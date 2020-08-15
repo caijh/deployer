@@ -31,6 +31,4 @@ public class Cluster extends BaseEntity<String> {
     @Column(nullable = false)
     private String kubeApiserver;
 
-    private String authToken;
-
 }

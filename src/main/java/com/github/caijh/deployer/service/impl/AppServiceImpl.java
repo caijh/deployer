@@ -88,11 +88,6 @@ public class AppServiceImpl implements AppService {
     }
 
     @Override
-    public Optional<App> getByName(String clusterId, String appName) {
-        return appRepository.findByClusterIdAndName(clusterId, appName);
-    }
-
-    @Override
     public boolean delete(String appId) {
         App app = appRepository.findById(appId).orElseThrow(AppNotFoundException::new);
 
@@ -109,6 +104,11 @@ public class AppServiceImpl implements AppService {
         FileSystemUtils.deleteRecursively(toDeleted);
 
         return true;
+    }
+
+    @Override
+    public Optional<App> getById(String appId) {
+        return appRepository.findById(appId);
     }
 
     private void renderTemplateThenWriteFile(App app) throws IOException {

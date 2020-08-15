@@ -24,8 +24,8 @@ public interface AppService {
      */
     Page<App> list(Pageable pageable);
 
-    Optional<App> getByName(String clusterId, String appName);
-
     boolean delete(String appId);
+
+    Optional<App> getById(String appId);
 
 }
