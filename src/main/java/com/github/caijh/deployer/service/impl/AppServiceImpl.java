@@ -9,8 +9,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 
 import com.github.caijh.commons.base.exception.BizRuntimeException;
-import com.github.caijh.deployer.cmd.Kubectl;
-import com.github.caijh.deployer.cmd.ProcessResult;
+import com.github.caijh.commons.util.process.ProcessResult;
+import com.github.caijh.deployer.cmd.ApplySubCommand;
+import com.github.caijh.deployer.cmd.CommandReceiver;
+import com.github.caijh.deployer.cmd.DeleteSubCommand;
 import com.github.caijh.deployer.config.props.AppsProperties;
 import com.github.caijh.deployer.enums.AppStatusEnum;
 import com.github.caijh.deployer.exception.AppNotFoundException;
@@ -75,12 +77,13 @@ public class AppServiceImpl implements AppService {
             // 渲染模板并写入到app的revision目录下
             renderTemplateThenWriteFile(app);
 
-            processResult = Kubectl.process(Kubectl.SubCommand.APPLY, cluster, app);
-            if (processResult.getExitValue() != 0) {
+            processResult = CommandReceiver.getInstance().dispatch(new ApplySubCommand(cluster, app));
+
+            if (!processResult.isSuccessful()) {
                 throw new KubectlException(processResult.getConsoleString());
             }
         } catch (Exception e) {
-            processResult = Kubectl.process(Kubectl.SubCommand.DELETE, cluster, app);
+            processResult = CommandReceiver.getInstance().dispatch(new DeleteSubCommand(cluster, app));
             if (processResult.isSuccessful()) {
                 File toDeleted = new File(AppsProperties.appsDir.getPath() + File.separator + app.getName() + File.separator + app.getRevision());// 清除渲染出来的文件
                 FileSystemUtils.deleteRecursively(toDeleted);
@@ -112,7 +115,7 @@ public class AppServiceImpl implements AppService {
 
         Cluster cluster = clusterRepository.findById(app.getClusterId()).orElseThrow(ClusterNotFoundException::new);
 
-        ProcessResult processResult = Kubectl.process(Kubectl.SubCommand.DELETE, cluster, app);
+        ProcessResult processResult = CommandReceiver.getInstance().dispatch(new DeleteSubCommand(cluster, app));
         if (!processResult.isSuccessful()) {
             throw new BizRuntimeException();
         }

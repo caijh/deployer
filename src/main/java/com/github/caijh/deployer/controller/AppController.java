@@ -67,6 +67,13 @@ public class AppController {
         return ResponseEntity.ok("delete ok");
     }
 
+    /**
+     * 日志.
+     *
+     * @param response response
+     * @param appId    appId
+     * @throws IOException if fail.
+     */
     @GetMapping(value = "/app/{appId}/logs")
     public void logs(HttpServletResponse response, @PathVariable String appId) throws IOException {
         appService.logs(appId, response);

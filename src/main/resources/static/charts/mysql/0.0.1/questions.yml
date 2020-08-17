@@ -1,0 +1,25 @@
+---
+questions:
+  - label: Mysql root 用户密码
+    var: mysqlRootPassword
+  - label: Mysql 用户
+    var: mysqlUser
+  - label: mysql 非root用户密码
+    var: mysqlPassword
+  - label: 持久卷大小
+    var: persistence.size
+  - label: 镜像
+    var: image
+    default: 172.25.10.70:1000/library/mysql
+  - label: 镜像tag
+    var: imageTag
+    default: 5.7.28
+  - label: 服务类型
+    var: service.type
+    options:
+      - NodePort
+      - ClusterIP
+  - label: mysql端口
+    var: service.port
+  - label: mysql对外端口
+    var: service.nodePort
