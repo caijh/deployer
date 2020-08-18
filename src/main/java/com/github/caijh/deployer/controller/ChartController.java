@@ -12,6 +12,7 @@ import com.github.caijh.framework.util.YamlUtils;
 import com.google.common.io.Files;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -48,11 +49,11 @@ public class ChartController {
      * @return json of questions.yml
      * @throws IOException if read questions.yml fail.
      */
-    @GetMapping(value = "/chart/{chartName}/{chartVersion}")
-    public String questions(@PathVariable String chartName, @PathVariable String chartVersion) throws IOException {
+    @GetMapping(value = "/chart/{chartName}/{chartVersion}/questions")
+    public ResponseEntity<String> questions(@PathVariable String chartName, @PathVariable String chartVersion) throws IOException {
         File file = chartService.findQuestionFile(chartName, chartVersion);
 
-        return YamlUtils.toJsonString(Files.asCharSource(file, UTF_8).read());
+        return ResponseEntity.ok(YamlUtils.toJsonString(Files.asCharSource(file, UTF_8).read()));
     }
 
 }
