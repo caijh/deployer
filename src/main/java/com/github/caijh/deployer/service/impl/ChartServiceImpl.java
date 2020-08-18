@@ -42,4 +42,11 @@ public class ChartServiceImpl implements ChartService {
         return chartRepository.findAll(pageable);
     }
 
+    @Override
+    public File findQuestionFile(String chartName, String chartVersion) {
+        String chartPath = findChartPath(chartName, chartVersion);
+
+        return new File(chartPath + File.separator + "questions.yml");
+    }
+
 }

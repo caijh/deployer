@@ -22,4 +22,5 @@ questions:
   - label: mysql端口
     var: service.port
   - label: mysql对外端口
+    show: service.type==NodePort
     var: service.nodePort
