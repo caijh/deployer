@@ -6,7 +6,6 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import com.alibaba.fastjson.JSON;
 import com.github.caijh.commons.util.CollectionUtils;
 import com.github.caijh.deployer.model.Cluster;
 import com.github.caijh.deployer.repository.ClusterRepository;
@@ -87,7 +86,6 @@ public class InformerInit {
                 @Override
                 public void onAdd(Pod pod) {
                     logger.info("{} pod added", pod.getMetadata().getName());
-                    logger.info(JSON.toJSONString(pod, true));
                 }
 
                 @Override
