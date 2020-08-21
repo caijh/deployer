@@ -5,10 +5,14 @@ import java.util.UUID;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
 
+import com.github.caijh.deployer.exception.AppNotFoundException;
 import com.github.caijh.deployer.model.App;
 import com.github.caijh.deployer.request.AppCreateReq;
 import com.github.caijh.deployer.request.AppsReqBody;
 import com.github.caijh.deployer.service.AppService;
+import com.github.caijh.deployer.service.ClusterService;
+import io.fabric8.kubernetes.api.model.PodList;
+import io.fabric8.kubernetes.client.KubernetesClient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +31,9 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 public class AppController {
+
+    @Inject
+    private ClusterService clusterService;
 
     @Inject
     private AppService appService;
@@ -88,6 +95,20 @@ public class AppController {
     @PostMapping(value = "/apps")
     public Page<App> apps(@RequestBody AppsReqBody reqBody) {
         return appService.list(PageRequest.of(reqBody.getPageNo(), reqBody.getPageSize()));
+    }
+
+    /**
+     * 应用下的Pod.
+     *
+     * @param appId 应用名称
+     * @return PodList
+     */
+    @GetMapping(value = "/app/{appId}/pods")
+    public PodList appPods(@PathVariable String appId) {
+        App app = appService.getById(appId).orElseThrow(AppNotFoundException::new);
+
+        KubernetesClient kubernetesClient = clusterService.getKubernetesClient(app.getClusterId());
+        return kubernetesClient.pods().inNamespace(app.getNamespace()).withLabel("app", app.getName()).list();
     }
 
 }

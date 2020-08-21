@@ -2,8 +2,6 @@ package com.github.caijh.deployer.controller;
 
 import javax.inject.Inject;
 
-import com.github.caijh.deployer.exception.AppNotFoundException;
-import com.github.caijh.deployer.model.App;
 import com.github.caijh.deployer.service.AppService;
 import com.github.caijh.deployer.service.ClusterService;
 import io.fabric8.kubernetes.api.model.NamespaceList;
@@ -87,21 +85,6 @@ public class K8SController extends BaseController {
     public PodList namespacePods(@PathVariable String clusterId, @PathVariable String namespace) {
         KubernetesClient kubernetesClient = clusterService.getKubernetesClient(clusterId);
         return kubernetesClient.pods().inNamespace(namespace).list();
-    }
-
-    /**
-     * 应用下的Pod.
-     *
-     * @param clusterId 集群id.
-     * @param appId     应用名称
-     * @return PodList
-     */
-    @GetMapping(value = "/cluster/{clusterId}/app/{appId}/pods")
-    public PodList appPods(@PathVariable String clusterId, @PathVariable String appId) {
-        App app = appService.getById(appId).orElseThrow(AppNotFoundException::new);
-
-        KubernetesClient kubernetesClient = clusterService.getKubernetesClient(clusterId);
-        return kubernetesClient.pods().inNamespace(app.getNamespace()).list();
     }
 
 }
