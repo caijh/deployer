@@ -74,7 +74,10 @@ public class ClusterServiceImpl implements ClusterService {
 
     @Override
     public KubernetesClient getKubernetesClient(Cluster cluster) {
-        KubernetesClient kubernetesClient;
+        KubernetesClient kubernetesClient = kubernetesClients.get(cluster.getId());
+        if (kubernetesClient != null) {
+            return kubernetesClient;
+        }
 
         try {
             File kubeconfig = new File(ClustersProperties.getClustersDir().getPath() + File.separator + cluster.getId() + File.separator + "kubeconfig");
