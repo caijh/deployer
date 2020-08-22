@@ -11,6 +11,7 @@ import com.github.caijh.deployer.request.AppCreateReq;
 import com.github.caijh.deployer.request.AppsReqBody;
 import com.github.caijh.deployer.service.AppService;
 import com.github.caijh.deployer.service.ClusterService;
+import io.fabric8.kubernetes.api.model.EventList;
 import io.fabric8.kubernetes.api.model.PodList;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import org.springframework.data.domain.Page;
@@ -109,6 +110,25 @@ public class AppController {
 
         KubernetesClient kubernetesClient = clusterService.getKubernetesClient(app.getClusterId());
         return kubernetesClient.pods().inNamespace(app.getNamespace()).withLabel("app", app.getName()).list();
+    }
+
+    /**
+     * 获取Pod的事件.
+     *
+     * @param appId   app id
+     * @param podName pod name
+     * @return EventList
+     */
+    @GetMapping(value = "/app/{appId}/pod/{podName}/events")
+    public EventList appPodEvents(@PathVariable String appId, @PathVariable String podName) {
+        App app = appService.getById(appId).orElseThrow(AppNotFoundException::new);
+
+        KubernetesClient kubernetesClient = clusterService.getKubernetesClient(app.getClusterId());
+
+        return kubernetesClient.v1().events()
+                               .inNamespace(app.getNamespace())
+                               .withField("involvedObject.name", podName)
+                               .list();
     }
 
 }

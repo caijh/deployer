@@ -1,10 +1,13 @@
 package com.github.caijh.deployer.model;
 
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 
 import com.github.caijh.framework.orm.model.BaseEntity;
+import io.fabric8.kubernetes.api.model.Node;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -30,5 +33,8 @@ public class Cluster extends BaseEntity<String> {
      */
     @Column(nullable = false)
     private String kubeApiserver;
+
+    @Transient
+    private List<Node> nodes;
 
 }

@@ -1,15 +1,17 @@
 package com.github.caijh.deployer.init;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import com.github.caijh.commons.util.CollectionUtils;
+import com.github.caijh.deployer.cache.Cache;
 import com.github.caijh.deployer.model.Cluster;
 import com.github.caijh.deployer.repository.ClusterRepository;
 import com.github.caijh.deployer.service.ClusterService;
+import io.fabric8.kubernetes.api.model.Event;
+import io.fabric8.kubernetes.api.model.EventList;
 import io.fabric8.kubernetes.api.model.Node;
 import io.fabric8.kubernetes.api.model.NodeList;
 import io.fabric8.kubernetes.api.model.Pod;
@@ -22,11 +24,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import static com.github.caijh.deployer.cache.Cache.CLUSTER_ID;
+
 @Component
 public class InformerInit {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
-    private final Map<String, SharedInformerFactory> sharedInformerFactoryMap = new HashMap<>();
     @Inject
     private ClusterRepository clusterRepository;
     @Inject
@@ -40,22 +43,60 @@ public class InformerInit {
             return;
         }
 
-        clusters.forEach(this::initClusterInformer);
+        clusters = clusters.stream().filter(e -> clusterService.getKubernetesClient(e).getVersion() != null).collect(Collectors.toList());
+
+        clusters.forEach(this::initCluster);
     }
 
+    public void initCluster(Cluster cluster) {
+        this.addClusterLabel2Node(cluster);
 
-    public void initClusterInformer(Cluster cluster) {
+        this.initClusterInformer(cluster);
+    }
+
+    private void addClusterLabel2Node(Cluster cluster) {
+        KubernetesClient kubernetesClient = clusterService.getKubernetesClient(cluster);
+        NodeList nodeList = kubernetesClient.nodes().withoutLabel(CLUSTER_ID).list();
+        nodeList.getItems()
+                .forEach(e -> kubernetesClient.nodes()
+                                              .withName(e.getMetadata().getName()).edit()
+                                              .editMetadata().addToLabels("cluster/id", cluster.getId())
+                                              .endMetadata().done());
+    }
+
+    private void initClusterInformer(Cluster cluster) {
         KubernetesClient kubernetesClient = clusterService.getKubernetesClient(cluster);
         SharedInformerFactory sharedInformerFactory = kubernetesClient.informers();
-        sharedInformerFactoryMap.put(cluster.getId(), sharedInformerFactory);
         logger.info("Cluster {} Informer factory initialized.", cluster.getName());
 
         createNodeInformer(sharedInformerFactory);
 
         createPodInformer(sharedInformerFactory);
 
+        createEventInformer(sharedInformerFactory);
+
         sharedInformerFactory.startAllRegisteredInformers();
         logger.info("Cluster {} Starting all registered informers", cluster.getName());
+    }
+
+    private void createEventInformer(SharedInformerFactory sharedInformerFactory) {
+        SharedIndexInformer<Event> informer = sharedInformerFactory.sharedIndexInformerFor(Event.class, EventList.class, 30 * 1000L);
+        informer.addEventHandler(new ResourceEventHandler<Event>() {
+            @Override
+            public void onAdd(Event obj) {
+                logger.info("event: {} added: {}", obj.getMetadata().getName(), obj.getInvolvedObject().getName());
+            }
+
+            @Override
+            public void onUpdate(Event oldObj, Event newObj) {
+                logger.info("event: {} update: {}", newObj.getMetadata().getName(), newObj.getInvolvedObject().getName());
+            }
+
+            @Override
+            public void onDelete(Event obj, boolean deletedFinalStateUnknown) {
+                logger.info("event: {} delete: {}", obj.getMetadata().getName(), obj.getInvolvedObject().getName());
+            }
+        });
     }
 
     private void createNodeInformer(SharedInformerFactory sharedInformerFactory) {
@@ -64,16 +105,19 @@ public class InformerInit {
             @Override
             public void onAdd(Node obj) {
                 logger.info("node: {} added to cluster: {}", obj.getMetadata().getName(), obj.getMetadata().getClusterName());
+                Cache.Kubernetes.add(obj);
             }
 
             @Override
             public void onUpdate(Node oldObj, Node newObj) {
                 logger.info("node: {} in cluster: {} updated", oldObj.getMetadata().getName(), oldObj.getMetadata().getClusterName());
+                Cache.Kubernetes.update(newObj);
             }
 
             @Override
             public void onDelete(Node obj, boolean deletedFinalStateUnknown) {
                 logger.info("node: {} in cluster: {} deleted", obj.getMetadata().getName(), obj.getMetadata().getClusterName());
+                Cache.Kubernetes.delete(obj);
             }
         });
     }
