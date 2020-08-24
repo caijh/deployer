@@ -9,6 +9,7 @@ import com.github.caijh.deployer.model.Cluster;
 import com.github.caijh.deployer.request.ClusterAddReqBody;
 import com.github.caijh.deployer.request.ClustersReqBody;
 import com.github.caijh.deployer.service.ClusterService;
+import com.github.caijh.framework.web.controller.BaseController;
 import io.fabric8.kubernetes.api.model.ComponentStatusList;
 import io.fabric8.kubernetes.api.model.NamespaceList;
 import io.fabric8.kubernetes.api.model.NodeList;
@@ -32,7 +33,7 @@ import org.springframework.web.multipart.MultipartFile;
  * @author caijunhui
  */
 @RestController
-public class ClusterController {
+public class ClusterController extends BaseController {
 
     @Inject
     private ClusterService clusterService;

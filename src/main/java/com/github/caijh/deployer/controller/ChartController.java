@@ -9,6 +9,7 @@ import com.github.caijh.deployer.model.Chart;
 import com.github.caijh.deployer.request.ChartsReqBody;
 import com.github.caijh.deployer.service.ChartService;
 import com.github.caijh.framework.util.YamlUtils;
+import com.github.caijh.framework.web.controller.BaseController;
 import com.google.common.io.Files;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -25,7 +26,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  * 应用模板控制器.
  */
 @RestController
-public class ChartController {
+public class ChartController extends BaseController {
 
     @Inject
     private ChartService chartService;

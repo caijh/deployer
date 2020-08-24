@@ -1,0 +1,64 @@
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: deployer
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: nfs-storage
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployer
+  labels:
+    app: deployer
+spec:
+  selector:
+    matchLabels:
+      app: deployer
+  template:
+    metadata:
+      labels:
+        app: deployer
+    spec:
+      containers:
+        - image: deployer:1.0.0
+          name: deployer
+          ports:
+            - containerPort: 8080
+              name: web
+          lifecycle:
+            preStop:
+              exec:
+                command: ["curl", "-X", "POST", "http://127.0.0.1:8080/actuator/shutdown"]
+            readinessProbe:              #就绪探针
+              httpGet:
+                path: /actuator/health/readiness
+                port: web
+              initialDelaySeconds: 30    #延迟加载时间
+              periodSeconds: 5           #重试时间间隔
+              timeoutSeconds: 10         #超时时间设置
+              failureThreshold: 5        #探测失败的重试次数
+            livenessProbe:               #存活探针
+              httpGet:
+                path: /actuator/health/liveness
+                port: web
+              initialDelaySeconds: 30    #延迟加载时间
+              periodSeconds: 5           #重试时间间隔
+              timeoutSeconds: 5          #超时时间设置
+              failureThreshold: 3        #探测失败的重试次数
+          volumeMounts:
+            - name: data
+              mountPath: /data/clusters
+            - name: data
+              mountPath: /data/apps
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: deployer

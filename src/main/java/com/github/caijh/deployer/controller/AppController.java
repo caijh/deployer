@@ -11,6 +11,7 @@ import com.github.caijh.deployer.request.AppCreateReq;
 import com.github.caijh.deployer.request.AppsReqBody;
 import com.github.caijh.deployer.service.AppService;
 import com.github.caijh.deployer.service.ClusterService;
+import com.github.caijh.framework.web.controller.BaseController;
 import io.fabric8.kubernetes.api.model.EventList;
 import io.fabric8.kubernetes.api.model.PodList;
 import io.fabric8.kubernetes.client.KubernetesClient;
@@ -31,7 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author caijunhui
  */
 @RestController
-public class AppController {
+public class AppController extends BaseController {
 
     @Inject
     private ClusterService clusterService;
