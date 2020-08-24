@@ -2,7 +2,6 @@ package com.github.caijh.deployer.init;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import com.github.caijh.commons.util.CollectionUtils;
@@ -22,12 +21,14 @@ import io.fabric8.kubernetes.client.informers.SharedIndexInformer;
 import io.fabric8.kubernetes.client.informers.SharedInformerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
 import static com.github.caijh.deployer.cache.Cache.CLUSTER_ID;
 
 @Component
-public class InformerInit {
+public class InformerInit implements ApplicationListener<ApplicationReadyEvent> {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
     @Inject
@@ -35,7 +36,6 @@ public class InformerInit {
     @Inject
     private ClusterService clusterService;
 
-    @PostConstruct
     public void init() {
         List<Cluster> clusters = clusterRepository.findAll();
 
@@ -56,7 +56,7 @@ public class InformerInit {
 
     private void addClusterLabel2Node(Cluster cluster) {
         KubernetesClient kubernetesClient = clusterService.getKubernetesClient(cluster);
-        NodeList nodeList = kubernetesClient.nodes().withoutLabel(CLUSTER_ID).list();
+        NodeList nodeList = kubernetesClient.nodes().withoutLabel(CLUSTER_ID, cluster.getId()).list();
         nodeList.getItems()
                 .forEach(e -> kubernetesClient.nodes()
                                               .withName(e.getMetadata().getName()).edit()
@@ -145,6 +145,15 @@ public class InformerInit {
         );
 
 
+    }
+
+    @Override
+    public void onApplicationEvent(ApplicationReadyEvent event) {
+        logger.info("Start to init informer {} for application", event.getApplicationContext().getApplicationName());
+
+        this.init();
+
+        logger.info("End init informer {} for application", event.getApplicationContext().getApplicationName());
     }
 
 }
