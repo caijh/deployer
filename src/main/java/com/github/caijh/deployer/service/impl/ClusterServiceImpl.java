@@ -84,7 +84,7 @@ public class ClusterServiceImpl implements ClusterService {
             Config config = Config.fromKubeconfig(Files.asCharSource(kubeconfig, UTF_8).read());
             kubernetesClient = new DefaultKubernetesClient(config);
         } catch (IOException e) {
-            throw new BizRuntimeException();
+            throw new BizRuntimeException(e);
         }
 
         kubernetesClients.put(cluster.getId(), kubernetesClient);

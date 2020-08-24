@@ -5,6 +5,8 @@ target/
 
 src/main/resources/static/docs/
 
+data/
+
 HELP.md
 
 # Log file
