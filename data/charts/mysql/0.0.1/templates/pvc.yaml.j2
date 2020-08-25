@@ -1,0 +1,14 @@
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: "{{ name }}"
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: "{{ persistence.size }}"
+{% if persistence.storageClass != '' %}
+  storageClassName: "{{ persistence.storageClass }}"
+{% endif %}

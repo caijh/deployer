@@ -5,7 +5,11 @@ target/
 
 src/main/resources/static/docs/
 
-data/
+data/apps/*
+!data/apps/.gitkeep
+
+data/clusters/*
+!data/**/.gitkeep
 
 HELP.md
 
