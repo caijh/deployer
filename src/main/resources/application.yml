@@ -9,7 +9,7 @@ spring:
 
 helm:
   charts:
-    dir: classpath:static/charts
+    dir: file:./data/charts
 
 clusters:
   dir: file:./data/clusters

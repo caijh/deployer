@@ -1,7 +1,7 @@
 FROM openjdk:8-jdk-alpine
 RUN apk --no-cache add curl && echo "Asia/Shanghai" > /etc/timezone
 
-RUN mkdir /data && mkdir /data/clusters && mkdir /data/apps
+RUN mkdir /data && mkdir /data/clusters && mkdir /data/apps && mkdir /data/charts
 
 ARG JAR_FILE
 COPY target/${JAR_FILE} app.jar

@@ -28,11 +28,19 @@ spec:
         app: deployer
     spec:
       containers:
-        - image: deployer:1.0.0
+        - image: caijunhui/deployer:0.0.1-SNAPSHOT
+          imagePullPolicy: Always
           name: deployer
           ports:
             - containerPort: 8080
               name: web
+          env:
+            - name: APP_OPTS
+              value: |
+                --clusters.dir=file:/data/clusters
+                --apps.dir=file:/data/apps
+                --helm.charts.dir=file:/data/charts
+                --spring.resources.static-locations=classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/,/data/charts/
           lifecycle:
             preStop:
               exec:
@@ -56,8 +64,13 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /data/clusters
+              subPath: "clusters"
             - name: data
               mountPath: /data/apps
+              subPath: "apps"
+            - name: data
+              mountPath: /data/charts
+              subPath: "charts"
       volumes:
         - name: data
           persistentVolumeClaim:
