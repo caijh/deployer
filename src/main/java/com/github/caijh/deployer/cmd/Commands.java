@@ -3,6 +3,8 @@ package com.github.caijh.deployer.cmd;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.github.caijh.deployer.cmd.kubectl.Kubectl;
+
 public class Commands {
 
     private static final Map<String, Invoker> INVOKERS = new HashMap<>();

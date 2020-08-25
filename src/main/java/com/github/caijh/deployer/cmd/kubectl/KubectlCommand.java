@@ -1,4 +1,4 @@
-package com.github.caijh.deployer.cmd;
+package com.github.caijh.deployer.cmd.kubectl;
 
 import com.github.caijh.commons.util.process.Command;
 import com.github.caijh.deployer.model.App;

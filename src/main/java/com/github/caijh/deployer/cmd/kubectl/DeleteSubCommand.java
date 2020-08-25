@@ -1,4 +1,4 @@
-package com.github.caijh.deployer.cmd;
+package com.github.caijh.deployer.cmd.kubectl;
 
 import java.io.File;
 

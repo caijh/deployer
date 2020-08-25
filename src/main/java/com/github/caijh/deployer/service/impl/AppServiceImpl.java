@@ -10,9 +10,9 @@ import javax.transaction.Transactional;
 
 import com.github.caijh.commons.base.exception.BizRuntimeException;
 import com.github.caijh.commons.util.process.ProcessResult;
-import com.github.caijh.deployer.cmd.ApplySubCommand;
 import com.github.caijh.deployer.cmd.CommandReceiver;
-import com.github.caijh.deployer.cmd.DeleteSubCommand;
+import com.github.caijh.deployer.cmd.kubectl.ApplySubCommand;
+import com.github.caijh.deployer.cmd.kubectl.DeleteSubCommand;
 import com.github.caijh.deployer.config.props.AppsProperties;
 import com.github.caijh.deployer.enums.AppStatusEnum;
 import com.github.caijh.deployer.exception.AppNotFoundException;

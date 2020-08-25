@@ -1,7 +1,8 @@
-package com.github.caijh.deployer.cmd;
+package com.github.caijh.deployer.cmd.kubectl;
 
 import com.github.caijh.commons.util.process.Command;
 import com.github.caijh.commons.util.process.ProcessResult;
+import com.github.caijh.deployer.cmd.Invoker;
 
 public class Kubectl implements Invoker {
 
