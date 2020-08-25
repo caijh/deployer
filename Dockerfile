@@ -3,6 +3,7 @@ RUN apk --no-cache add curl && echo "Asia/Shanghai" > /etc/timezone
 
 RUN mkdir /data && mkdir /data/clusters && mkdir /data/apps && mkdir /data/charts
 
+#万×的社会主义，to download by yourself, if you are in china.
 RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl && \
     chmod +x ./kubectl && \
     mv ./kubectl /usr/bin/kubectl
